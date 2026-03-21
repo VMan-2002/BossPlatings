@@ -6,3 +6,5 @@ WIP
 ## So what happens?
 By defeating Boss Blinds, you collect Boss Platings.<br>
 These can be applied to Jokers to give additional effects.
+
+![Image of a Boss Plating, "Bull Bronzed"](images/bossplating_example.png)
