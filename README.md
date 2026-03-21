@@ -1,7 +1,7 @@
 # BossPlatings
 Another Balatro mod where stuff happens when you defeat boss blinds
 
-WIP
+## WORK IN PROGRESS, it's very much NOT READY to be played with!
 
 ## So what happens?
 By defeating Boss Blinds, you collect Boss Platings.<br>
