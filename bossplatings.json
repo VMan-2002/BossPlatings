@@ -1,0 +1,18 @@
+{
+	"id": "BossPlatings",
+	"name": "Boss Platings",
+	"author": ["VMan_2002"],
+    "badge_colour": "9B2D41",
+	"description": "After each Boss Blind, recieve a Boss Plating to attach to your Jokers",
+	"prefix": "bplating",
+	"main_file": "bossplatings.lua",
+    "version": "0.0.0",
+    "priority": -799990,
+    "dependencies": [
+        "Steamodded (>=1.0.0~ALPHA-1424a)",
+        "Lovely (>=0.6.0)",
+        "TopUpLib"
+    ],
+    "conflicts": [
+    ]
+}

@@ -1,0 +1,17 @@
+[manifest]
+version = "0.1.0"
+dump_lua = true
+priority = 0
+
+# boss plating info on cards
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = 'for _, v in ipairs(info_queue) do'
+position = "before"
+payload = '''
+if (card and card.ability and card.ability.bossplating) then
+	info_queue[#info_queue+1] = {set = "Other", key = "bossplating_"..card.ability.bossplating.key}
+end
+'''
+match_indent = true
