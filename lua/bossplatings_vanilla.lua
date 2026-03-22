@@ -58,7 +58,7 @@ BossPlatings.add({
 	key = "wall",
 	pos = {x=7,y=0},
 	calculate = function(self, card, context)
-		if context.joker_main then
+		if BossPlatings.is_scored(card, context, true, false, true) then
 			print("Wall Joker Main Effect")
 			return {x_mult = 1.5}
 		end

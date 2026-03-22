@@ -3,7 +3,8 @@ return {
 		dictionary = {
 			bossplatings_short_remove_start = {
 				"The "
-			}
+			},
+			k_booster_group_bossplating = "Plating Pack"
 		}
 	},
 	descriptions = {
@@ -16,6 +17,15 @@ return {
 					"to a selected Joker"
 				}
 			},
+			bossplating_item_advanced = {
+				name = "#1# Plating",
+				text = {
+					"Use to apply",
+					"{V:1}#2#",
+					"to a selected Joker",
+					"or playing card"
+				}
+			},
 			bossplating_collection_item = {
 				name = "#1# Plating",
 				text = {	
@@ -24,6 +34,30 @@ return {
 					"to a selected Joker",
 					"{C:inactive}Earned upon defeating",
 					"{C:inactive}#3#",
+				}
+			}
+		},
+		Voucher = {
+			v_bplating_blacksmith = {
+				name = "Phoenician Blacksmith",
+				text = {
+					"{C:bossplating}Plating Packs{} can",
+					"appear in the Shop"
+				}
+			},
+			v_bplating_advanced = {
+				name = "Card Battalion Advanced",
+				text = {
+					"{C:bossplating}Boss Platings{} can be",
+					"attached to playing cards"
+				}
+			},
+			v_bplating_reality = {
+				name = "Detached from Reality",
+				text = {
+					"{C:bossplating}Boss Platings{} held in consumable",
+					"area trigger their effects",
+					"{C:inactive}(if possible)"
 				}
 			}
 		},
@@ -40,7 +74,7 @@ return {
 			bossplating_bplating_hook = {
 				name = "Claw Closed",
 				text = {
-					"+1 Mult per card",
+					"{_A:mult:+1} per card",
 					"discarded this round"
 				}
 			},
@@ -68,7 +102,7 @@ return {
 			bossplating_bplating_wheel = {
 				name = "Motor Mastered",
 				text = topuplib.asub {
-					"1 in 2 chance for cards",
+					"{C:green}1 in 2{} chance for cards",
 					"to be drawn face-up",
 					"despite Boss Blind"
 				}
@@ -83,14 +117,14 @@ return {
 			bossplating_bplating_club = {
 				name = "Clover Cluttered",
 				text = topuplib.asub {
-					"+2 Mult per scored",
+					"{_A:mult:+2} Mult per scored",
 					"card of Club suit"
 				}
 			},
 			bossplating_bplating_fish = {
 				name = "Shark Sharpened",
 				text = topuplib.asub {
-					"+1 Mult for each face-down",
+					"{_A:mult:+1} for each face-down",
 					"card scored or held in hand"
 				}
 			},
@@ -111,14 +145,21 @@ return {
 			bossplating_bplating_water = {
 				name = "Ocean Optimized",
 				text = topuplib.asub {
-					"+1 hand per round"
+					"{C:blue}+1{} hand per round"
+				}
+			},
+			bossplating_bplating_water_deck = {
+				name = "Ocean Optimized",
+				text = topuplib.asub {
+					"{C:green}1 in 2{} chance to gain",
+					"{C:blue}+1{} hand when scored"
 				}
 			},
 			bossplating_bplating_window = {
 				name = "Palladian Prized",
 				text = topuplib.asub {
-					"1 in 2 chance to",
-					"earn $1 per scored",
+					"{C:green}1 in 2{} chance to",
+					"earn {_A:money:1} per scored",
 					"card of Diamond suit"
 				}
 			},
@@ -184,7 +225,7 @@ return {
 			bossplating_bplating_tooth = {
 				name = "Fang Flourished",
 				text = topuplib.asub {
-					"+1 Mult for each $5",
+					"{_A:mult:+1} for each {_A:money:5}",
 					"{_A:currentmult:+0}"
 				}
 			},
@@ -198,9 +239,16 @@ return {
 			bossplating_bplating_mark = {
 				name = "Landmark Lavished",
 				text = topuplib.asub {
-					"1 in 5 chance for",
+					"{C:green}1 in 3{} chance for",
 					"face-down cards to",
 					"ignore hand size limit"
+				}
+			},
+			bossplating_bplating_mark_deck = {
+				name = "Landmark Lavished",
+				text = topuplib.asub {
+					"Retrigger all face-down cards",
+					"held in hand or scored"
 				}
 			},
 			bossplating_bplating_final_acorn = {
@@ -224,7 +272,7 @@ return {
 				text = topuplib.asub {
 					"{_A:xmult:2}",
 					"{_A:xmult:1.5} every {C:attention}3{} times attached",
-					"Joker triggers this hand"
+					"card triggers this hand"
 				}
 			},
 			bossplating_bplating_final_heart = {
@@ -242,11 +290,18 @@ return {
 					"each round"
 				}
 			},
+			bossplating_bplating_final_bell_deck = {
+				name = "Cerulean Bell's Chime",
+				text = topuplib.asub {
+					"Retrigger half (rounded down)",
+					"of played cards {C:attention}1{} additional time"
+				}
+			},
 			--TopUpLib
 			bossplating_bplating_topuplib_infinit = {
 				name = "Top Plating",
 				text = topuplib.asub {
-					"+1.0e300 Mult and Chips"
+					"{C:attention}+1.0e300{} Mult and Chips"
 				}
 			},
 			--Cryptid
@@ -295,6 +350,55 @@ return {
 				text = topuplib.asub {
 					"Copies effect of",
 					"other Boss Platings"
+				}
+			},
+			--Booster Packs
+			p_bplating_standard = {
+				name = "Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to a Joker"
+				}
+			},
+			p_bplating_jumbo = {
+				name = "Jumbo Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to Jokers"
+				}
+			},
+			p_bplating_mega = {
+				name = "Mega Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to Jokers"
+				}
+			},
+			p_bplating_standard_alt = {
+				name = "Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to a card"
+				}
+			},
+			p_bplating_jumbo_alt = {
+				name = "Jumbo Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to cards"
+				}
+			},
+			p_bplating_mega_alt = {
+				name = "Mega Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"{C:bossplating}Boss Platings{} to",
+					"attach to cards"
 				}
 			}
 		}

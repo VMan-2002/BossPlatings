@@ -2,7 +2,42 @@
 --	this is JUST GOLD PLATED!
 
 BossPlatings = {
-	platings = {}
+	platings = {},
+	-- Check if a BossPlatings voucher level is owned
+	has_voucher = function(i)
+		return next(SMODS.find_card(({"v_bplating_blacksmith", "v_bplating_advanced", "v_bplating_reality"})[i]))
+	end,
+	-- Check if this card is considered "scored"
+	is_scored = function(card, context, inplay, inhand, inconsumables)
+		if card.area == G.jokers or (card.area == G.consumeables and BossPlatings.has_voucher(3) and inconsumables) then
+			return context.joker_main
+		elseif card.area == G.play and inplay then
+			return context.main_scoring
+		elseif card.area == G.hand and inhand then
+			return context.individual
+		end
+	end,
+	--Find applicable cards with platings with the given bossplating id (also gives plating items with reality voucher)
+	find_plating = function(key, inplay, inhand)
+		local result = {}
+		for _,area in pairs({G.jokers, inhand ~= false and G.hand, inplay ~= false and G.play}) do
+			if area then
+				for k,v in pairs(area.cards) do
+					if v.ability.bossplating and v.ability.bossplating.key == key then
+						table.insert(result, v)
+					end
+				end
+			end
+		end
+		if BossPlatings.has_voucher(3) then
+			for k,v in pairs(G.consumeables.cards) do
+				if v.config.center.bossplatings_id == key then
+					table.insert(result, v)
+				end
+			end
+		end
+		return result
+	end
 }
 
 local ctype = SMODS.ConsumableType {
@@ -66,25 +101,34 @@ local bossplatings_item_loc_vars = function(self, info_queue, card)
 end
 
 local bossplatings_can_use = function(self, card)
+	if BossPlatings.has_voucher(2) and next(G.hand.highlighted) then
+		return #G.hand.highlighted == 1 and not next(G.jokers.highlighted)
+	end
 	return #G.jokers.highlighted == 1
 end
 
-local bossplatings_use = function(self, card, area)
-	for k,v in pairs(G.jokers.highlighted) do
+local bossplatings_use_on_cards = function(self, cards)
+	for k,v in pairs(cards.highlighted) do
 		local t = BossPlatings.platings[self.bossplatings_id]
 		v.ability.bossplating = {
 			key = self.bossplatings_id,
 			ability = t.config and topuplib.tableShallowCopy(t.config) or nil
 		}
+		v.children.bossplating = nil
+	end
+end
+
+local bossplatings_use = function(self, card, area)
+	bossplatings_use_on_cards(self, G.jokers)
+	if BossPlatings.has_voucher(2) then
+		bossplatings_use_on_cards(self, G.hand)
 	end
 end
 
 BossPlatings.add = function(data)
 	local plating_id = SMODS.current_mod.prefix .. "_" .. data.key
 	local consumable_data = topuplib.tableShallowCopy(data)
-	local config = data.config
 	consumable_data.calculate = nil
-	consumable_data.config = nil
 	consumable_data.key = "plating_"..data.key
 	consumable_data.bossplatings_id = plating_id
 	consumable_data.loc_vars = data.loc_vars or bossplatings_item_loc_vars
@@ -99,7 +143,7 @@ BossPlatings.add = function(data)
 		item_center = consumable,
 		from = data.key,
 		calculate = data.calculate,
-		config = config
+		config = data.config
 	}
 end
 
@@ -142,6 +186,8 @@ end
 local rq = {
 	"bossplatings_vanilla",
 	"drawstep_bossplatings",
+	"vouchers",
+	"boosters",
 	topuplib.debug and "bossplatings_testingcontent" or nil
 }
 

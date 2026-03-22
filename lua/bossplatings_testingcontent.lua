@@ -10,7 +10,7 @@ BossPlatings.add({
 	pos = {x=0,y=0},
 	atlas = "bossplatings_testingcontent",
 	calculate = function(self, card, context)
-		if context.joker_main then
+		if BossPlatings.is_scored(card, context, true, false, true) then
 			return {mult = 1e300, chips = 1e300}
 		end
 	end
