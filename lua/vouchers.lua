@@ -5,7 +5,6 @@ SMODS.Atlas {
 	py = 95
 }
 
-
 SMODS.Voucher {
 	key = "blacksmith",
 	atlas = "vouchers",

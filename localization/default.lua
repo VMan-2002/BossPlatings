@@ -73,9 +73,10 @@ return {
 			--Vanilla
 			bossplating_bplating_hook = {
 				name = "Claw Closed",
-				text = {
+				text = topuplib.asub {
 					"{_A:mult:+1} per card",
-					"discarded this round"
+					"discarded this round",
+					"{_A:currentmult:+0}"
 				}
 			},
 			bossplating_bplating_ox = {
@@ -356,7 +357,7 @@ return {
 			p_bplating_standard = {
 				name = "Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
 					"attach to a Joker"
 				}
@@ -364,7 +365,7 @@ return {
 			p_bplating_jumbo = {
 				name = "Jumbo Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
 					"attach to Jokers"
 				}
@@ -372,15 +373,23 @@ return {
 			p_bplating_mega = {
 				name = "Mega Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
+					"attach to Jokers"
+				}
+			},
+			p_bplating_showdown = {
+				name = "Showdown Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of {C:attention}#2#",
+					"{C:bossplating}Showdown Boss Platings{} to",
 					"attach to Jokers"
 				}
 			},
 			p_bplating_standard_alt = {
 				name = "Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
 					"attach to a card"
 				}
@@ -388,7 +397,7 @@ return {
 			p_bplating_jumbo_alt = {
 				name = "Jumbo Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
 					"attach to cards"
 				}
@@ -396,8 +405,16 @@ return {
 			p_bplating_mega_alt = {
 				name = "Mega Plating Pack",
 				text = {
-					"Select {C:attention}#1#{} of up to {C:attention}#2#",
+					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Boss Platings{} to",
+					"attach to cards"
+				}
+			},
+			p_bplating_showdown_alt = {
+				name = "Showdown Plating Pack",
+				text = {
+					"Select {C:attention}#1#{} of {C:attention}#2#",
+					"{C:bossplating}Showdown Boss Platings{} to",
 					"attach to cards"
 				}
 			}

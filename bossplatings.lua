@@ -17,7 +17,7 @@ BossPlatings = {
 			return context.individual
 		end
 	end,
-	--Find applicable cards with platings with the given bossplating id (also gives plating items with reality voucher)
+	--Find applicable cards with platings with the given bossplating id (includes plating items when reality voucher)
 	find_plating = function(key, inplay, inhand)
 		local result = {}
 		for _,area in pairs({G.jokers, inhand ~= false and G.hand, inplay ~= false and G.play}) do
@@ -40,6 +40,7 @@ BossPlatings = {
 	end
 }
 
+--Item
 local ctype = SMODS.ConsumableType {
 	key = "BossPlating",
 	primary_colour = HEX("9B2D41"),
@@ -65,16 +66,13 @@ local ctype = SMODS.ConsumableType {
 	collection_rows = {5,5,5},
 	default = "c_bplating_plating_ox"
 }
-
 G.P_CENTER_POOLS[ctype.key] = {}
-
 SMODS.Atlas {
 	key = "bossplatings",
 	path = "platings.png",
 	px = 71,
 	py = 95
 }
-
 local bossplatings_item_loc_vars = function(self, info_queue, card)
 	local blind_key = "bl_"..BossPlatings.platings[self.bossplatings_id].from
 	local bossplating_key = "bossplating_"..self.bossplatings_id
@@ -99,14 +97,12 @@ local bossplatings_item_loc_vars = function(self, info_queue, card)
 		vars = {blindnameshort, plating and plating.name or "Boss Plating", blind and blind.name, colours = {G.P_BLINDS[blind_key].boss_colour}}
 	}
 end
-
 local bossplatings_can_use = function(self, card)
 	if BossPlatings.has_voucher(2) and next(G.hand.highlighted) then
 		return #G.hand.highlighted == 1 and not next(G.jokers.highlighted)
 	end
 	return #G.jokers.highlighted == 1
 end
-
 local bossplatings_use_on_cards = function(self, cards)
 	for k,v in pairs(cards.highlighted) do
 		local t = BossPlatings.platings[self.bossplatings_id]
@@ -117,7 +113,6 @@ local bossplatings_use_on_cards = function(self, cards)
 		v.children.bossplating = nil
 	end
 end
-
 local bossplatings_use = function(self, card, area)
 	bossplatings_use_on_cards(self, G.jokers)
 	if BossPlatings.has_voucher(2) then
@@ -127,6 +122,7 @@ end
 
 BossPlatings.add = function(data)
 	local plating_id = SMODS.current_mod.prefix .. "_" .. data.key
+	local blind = SMODS.Blinds["bl_"..data.key] or G.P_BLINDS["bl_"..data.key]
 	local consumable_data = topuplib.tableShallowCopy(data)
 	consumable_data.calculate = nil
 	consumable_data.key = "plating_"..data.key
@@ -136,6 +132,10 @@ BossPlatings.add = function(data)
 	consumable_data.set = "BossPlating"
 	consumable_data.can_use = data.can_use or bossplatings_can_use
 	consumable_data.use = data.use or bossplatings_use
+	consumable_data.pools = {
+		BossPlating = true,
+		[(blind and blind.boss and blind.boss.showdown) and "BossPlatingShowdown" or "BossPlatingNormal"] = true
+	}
 	--consumable_data.omit = true
 	local consumable = SMODS.Consumable(consumable_data)
 	BossPlatings.platings[plating_id] = {
@@ -155,7 +155,6 @@ function Game:update_round_eval(dt, ...)
 	end
 	return round_eval_ref(self, dt, ...)
 end
-
 BossPlatings.give_plating_on_victory = function()
 	for _,v in pairs(BossPlatings.platings) do
 		if "bl_"..v.from == G.GAME.blind.config.blind.key then
@@ -165,6 +164,7 @@ BossPlatings.give_plating_on_victory = function()
 	end
 end
 
+--Eval Card
 local eval_card_ref = eval_card
 function eval_card(card, context, ...)
 	local t, post = eval_card_ref(card, context, ...)
@@ -190,7 +190,6 @@ local rq = {
 	"boosters",
 	topuplib.debug and "bossplatings_testingcontent" or nil
 }
-
 for k, v in ipairs(rq) do
 	if (type(k) == "number" or next(SMODS.find_mod(k))) and v ~= nil then
 		local a = assert(SMODS.load_file("lua/"..v..".lua"))()
