@@ -4,7 +4,8 @@ return {
 			bossplatings_short_remove_start = {
 				"The "
 			},
-			k_booster_group_bossplating = "Plating Pack"
+			k_booster_group_bossplating = "Plating Pack",
+			bplating_name_namta = "Namta"
 		}
 	},
 	descriptions = {
@@ -305,6 +306,19 @@ return {
 					"{C:attention}+1.0e300{} Mult and Chips"
 				}
 			},
+			bossplating_bplating_topuplib_debuff = {
+				name = "Disapproving Plating",
+				text = topuplib.asub {
+					"Debuffs attached card"
+				}
+			},
+			bossplating_bplating_topuplib_notallowed = {
+				name = "Prohibitive Plating",
+				text = topuplib.asub {
+					"Hands containing this",
+					"card are not allowed"
+				}
+			},
 			--Cryptid
 			bossplating_bplating_cry_clock = {
 				name = "Speed Sanded",
@@ -320,6 +334,13 @@ return {
 					"Earn {_A:money:5} for each",
 					"Rental Joker owned at",
 					"end of round"
+				}
+			},
+			bossplating_bplating_cry_landlord_deck = {
+				name = "Investment Ionized",
+				text = topuplib.asub {
+					"Earn {_A:money:3} for each",
+					"Rental Joker when scored"
 				}
 			},
 			--Paperback
@@ -351,6 +372,42 @@ return {
 				text = topuplib.asub {
 					"Copies effect of",
 					"other Boss Platings"
+				}
+			},
+			--Boss Platings
+			bossplating_bplating_bplating_mace = {
+				name = "Mace Malformed",
+				text = topuplib.asub {
+					"{_A:xmult:0.25} for each {C:attention}Joker",
+					"without a {C:bossplating}Boss Plating",
+					"{_A:currentxmult:1}"
+				}
+			},
+			bossplating_bplating_bplating_mace_deck = {
+				name = "Mace Malformed",
+				text = topuplib.asub {
+					"{_A:mult:+6} for each",
+					"card in {C:attention}played hand",
+					"without a {C:bossplating}Boss Plating",
+					"{_A:currentmult:+0}"
+				}
+			},
+			--Unik's Mod
+			bossplating_bplating_bplating_namta = {
+				name = "Straitjacket Slashed",
+				text = topuplib.asub {
+					"Add 10 {X:unik_lartceps_inverse,C:unik_lartceps1}Namta{} cards to deck",
+					"when sold or destroyed",
+					"{C:green}1 in 5{} chance to {C:red}debuff",
+					"Joker when Blind is selected"
+				}
+			},
+			bossplating_bplating_bplating_namta_deck = {
+				name = "Straitjacket Slashed",
+				text = topuplib.asub {
+					"Convert into a {X:unik_lartceps_inverse,C:unik_lartceps1}Namta{} card",
+					"if held in hand",
+					"{_A:emult:0.8} when scored"
 				}
 			},
 			--Booster Packs
@@ -416,6 +473,25 @@ return {
 					"Select {C:attention}#1#{} of {C:attention}#2#",
 					"{C:bossplating}Showdown Boss Platings{} to",
 					"attach to cards"
+				}
+			}
+		},
+		Blind = {
+			bl_bplating_mace = {
+				name = "The Mace",
+				text = {
+					"Disable effects of",
+					"all Boss Platings"
+				}
+			}
+		},
+		unik_lartceps = {
+			c_bplating_lartceps_plating = {
+				name = "Iron Maiden",
+				text = {
+					"Apply {C:unik_lartceps1}Straitjacket Slashed",
+					"to all owned Jokers and",
+					"half of full deck"
 				}
 			}
 		}

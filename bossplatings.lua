@@ -9,7 +9,9 @@ BossPlatings = {
 	end,
 	-- Check if this card is considered "scored"
 	is_scored = function(card, context, inplay, inhand, inconsumables)
-		if card.area == G.jokers or (card.area == G.consumeables and BossPlatings.has_voucher(3) and inconsumables) then
+		if BossPlatings.dont_trigger_plating(card, context, inplay, inhand, inconsumables) then
+			return false
+		elseif card.area == G.jokers or (card.area == G.consumeables and BossPlatings.has_voucher(3) and inconsumables) then
 			return context.joker_main
 		elseif card.area == G.play and inplay then
 			return context.main_scoring
@@ -17,7 +19,7 @@ BossPlatings = {
 			return context.individual
 		end
 	end,
-	--Find applicable cards with platings with the given bossplating id (includes plating items when reality voucher)
+	-- Find applicable cards with platings with the given bossplating id (includes plating items when reality voucher)
 	find_plating = function(key, inplay, inhand)
 		local result = {}
 		for _,area in pairs({G.jokers, inhand ~= false and G.hand, inplay ~= false and G.play}) do
@@ -37,6 +39,51 @@ BossPlatings = {
 			end
 		end
 		return result
+	end,
+	-- Return true if a boss plating should NOT be triggered.
+	-- Override this function to add your own conditions.
+	dont_trigger_plating = function(card, context, inplay, inhand, inconsumables)
+		return G.GAME.blind.config.blind.key == "bl_bplating_mace"
+	end,
+	-- Apply a boss playing to a card
+	apply = function(card, plating)
+		local t = BossPlatings.platings[plating]
+		v.ability.bossplating = {
+			key = plating,
+			ability = t.config and topuplib.tableShallowCopy(t.config) or nil
+		}
+		v.children.bossplating = nil
+	end,
+	-- loc_vars function for boss plating consumable
+	loc_vars = function(self, info_queue, card)
+		local blind_key = "bl_"..BossPlatings.platings[self.bossplatings_id].from
+		local blind_exist = G.P_BLINDS[blind_key]
+		local bossplating_key = "bossplating_"..self.bossplatings_id
+		local specificvars = BossPlatings.platings[self.bossplatings_id].specific_vars
+		local specificvars_type = type(specificvars)
+		info_queue[#info_queue + 1] = {set = "Other", key = bossplating_key,
+			specific_vars = (specificvars_type == "table" and specificvars) or (specificvars_type == "function" and specificvars(BossPlatings.platings[self.bossplatings_id], card)) or nil
+		}
+		local blind = G.localization.descriptions.Blind[blind_key]
+		local plating = G.localization.descriptions.Other[bossplating_key]
+		local blindnameshort = blind and blind.name
+		if blindnameshort then
+			for k,v in pairs(localize("bossplatings_short_remove_start")) do
+				if string.sub(blindnameshort, 1, string.len(v)) == v then
+					blindnameshort = string.sub(blindnameshort, string.len(v) + 1)
+					break
+				end
+			end
+		end
+		return {
+			key = self.bossplatings_loc_key or ((blind_exist and topuplib.viewedFromCollection(card)) and "bossplating_collection_item" or "bossplating_item"),
+			vars = {
+				self.bossplatings_title_override or blindnameshort,
+				plating and plating.name or "Boss Plating",
+				blind and blind.name,
+				colours = {self.plating_col or blind_exist and G.P_BLINDS[blind_key].boss_colour or {1,0,1,1}}
+			}
+		}
 	end
 }
 
@@ -73,30 +120,6 @@ SMODS.Atlas {
 	px = 71,
 	py = 95
 }
-local bossplatings_item_loc_vars = function(self, info_queue, card)
-	local blind_key = "bl_"..BossPlatings.platings[self.bossplatings_id].from
-	local bossplating_key = "bossplating_"..self.bossplatings_id
-	local specificvars = BossPlatings.platings[self.bossplatings_id].specific_vars
-	local specificvars_type = type(specificvars)
-	info_queue[#info_queue + 1] = {set = "Other", key = bossplating_key,
-		specific_vars = (specificvars_type == "table" and specificvars) or (specificvars_type == "function" and specificvars(BossPlatings.platings[self.bossplatings_id], card)) or nil
-	}
-	local blind = G.localization.descriptions.Blind[blind_key]
-	local plating = G.localization.descriptions.Other[bossplating_key]
-	local blindnameshort = blind and blind.name
-	if blindnameshort then
-		for k,v in pairs(localize("bossplatings_short_remove_start")) do
-			if string.sub(blindnameshort, 1, string.len(v)) == v then
-				blindnameshort = string.sub(blindnameshort, string.len(v) + 1)
-				break
-			end
-		end
-	end
-	return {
-		key = topuplib.viewedFromCollection(card) and "bossplating_collection_item" or "bossplating_item",
-		vars = {blindnameshort, plating and plating.name or "Boss Plating", blind and blind.name, colours = {G.P_BLINDS[blind_key].boss_colour}}
-	}
-end
 local bossplatings_can_use = function(self, card)
 	if BossPlatings.has_voucher(2) and next(G.hand.highlighted) then
 		return #G.hand.highlighted == 1 and not next(G.jokers.highlighted)
@@ -105,12 +128,7 @@ local bossplatings_can_use = function(self, card)
 end
 local bossplatings_use_on_cards = function(self, cards)
 	for k,v in pairs(cards.highlighted) do
-		local t = BossPlatings.platings[self.bossplatings_id]
-		v.ability.bossplating = {
-			key = self.bossplatings_id,
-			ability = t.config and topuplib.tableShallowCopy(t.config) or nil
-		}
-		v.children.bossplating = nil
+		BossPlatings.apply(v, self.bossplatings_id)
 	end
 end
 local bossplatings_use = function(self, card, area)
@@ -127,7 +145,7 @@ BossPlatings.add = function(data)
 	consumable_data.calculate = nil
 	consumable_data.key = "plating_"..data.key
 	consumable_data.bossplatings_id = plating_id
-	consumable_data.loc_vars = data.loc_vars or bossplatings_item_loc_vars
+	consumable_data.loc_vars = data.loc_vars or BossPlatings.loc_vars
 	consumable_data.atlas = data.atlas or "bossplatings"
 	consumable_data.set = "BossPlating"
 	consumable_data.can_use = data.can_use or bossplatings_can_use
@@ -184,13 +202,16 @@ function eval_card(card, context, ...)
 end
 
 local rq = {
+	"blinds",
 	"bossplatings_vanilla",
+	"bossplatings_bplatings",
 	"drawstep_bossplatings",
 	"vouchers",
 	"boosters",
-	topuplib.debug and "bossplatings_testingcontent" or nil
+	topuplib.debug and "bossplatings_testingcontent" or nil,
+	next(SMODS.find_mod("unik")) and "bossplatings_unik" or nil
 }
-for k, v in ipairs(rq) do
+for k, v in pairs(rq) do
 	if (type(k) == "number" or next(SMODS.find_mod(k))) and v ~= nil then
 		local a = assert(SMODS.load_file("lua/"..v..".lua"))()
 	end
